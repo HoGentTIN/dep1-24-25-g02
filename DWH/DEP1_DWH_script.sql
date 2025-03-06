@@ -31,7 +31,6 @@ CREATE TABLE [dbo].[DimTime] (
 CREATE TABLE [dbo].[DimDate] (
     [DateKey] INT PRIMARY KEY,
     [FullDate] DATE NOT NULL,
-    [DayName] VARCHAR(50),
     [MonthNameDutch] VARCHAR(50),
     [MonthNameEN] VARCHAR(50),
     [DayNameDutch] VARCHAR(50),
