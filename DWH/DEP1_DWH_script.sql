@@ -53,8 +53,8 @@ CREATE TABLE [dbo].[DimUser] (
 CREATE TABLE [dbo].[FactWeather] (
     [WeatherKey] INT IDENTITY(1,1) PRIMARY KEY,
     [DateKey] INT NOT NULL,
-    [TimeKey] INT NOT NULL,
-    [WeatherStationKey] INT NOT NULL,
+    [TimeKey] INT,
+    [WeatherStationKey] INT,
     [PrecipQuantity] DECIMAL(5,2),
     [TempAvg] DECIMAL(5,2),
     [TempMax] DECIMAL(5,2),
@@ -78,7 +78,7 @@ CREATE TABLE [dbo].[FactWeather] (
 CREATE TABLE [dbo].[FactBelpex] (
     [BelpexKey] INT IDENTITY(1,1) PRIMARY KEY,
     [DateKey] INT NOT NULL,
-    [TimeKey] INT NOT NULL,
+    [TimeKey] INT,
     [BelpexPrice] DECIMAL(10,4),
     [Belpex_RLP_MPrice] DECIMAL(10,4)
 );
@@ -86,8 +86,8 @@ CREATE TABLE [dbo].[FactBelpex] (
 CREATE TABLE [dbo].[FactEnergyUsage] (
     [UsageKey] INT IDENTITY(1,1) PRIMARY KEY,
     [DateKey] INT NOT NULL,
-    [TimeKey] INT NOT NULL,
-    [UserKey] INT NOT NULL,
+    [TimeKey] INT,
+    [UserKey] INT,
     [ConsumptionVolume_kWh] DECIMAL(10,2),
     [InjectionVolume_kWh] DECIMAL(10,2)
 );
@@ -95,7 +95,7 @@ CREATE TABLE [dbo].[FactEnergyUsage] (
 CREATE TABLE [dbo].[FactNetworkCosts] (
     [NetworkCostKey] INT IDENTITY(1,1) PRIMARY KEY,
     [DateKey] INT NOT NULL,
-    [UserKey] INT NOT NULL,
+    [UserKey] INT,
     [NetworkOperator] VARCHAR(255),
     [TransmissionCost] DECIMAL(10,2),
     [CapacityTariff_DigitalMeter] DECIMAL(10,2),
