@@ -55,6 +55,7 @@ CREATE TABLE [dbo].[FactWeather] (
     [TimeKey] INT,
     [WeatherStationKey] INT,
     [PrecipQuantity] DECIMAL(18,6),
+    [PrecipQuantity] DECIMAL(18,6),
     [TempAvg] DECIMAL(18,6),
     [TempMax] DECIMAL(18,6),
     [TempMin] DECIMAL(18,6),
