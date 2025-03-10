@@ -8,7 +8,8 @@ USE [DEP1_DWH];
 
 -- Dimension Tables
 CREATE TABLE [dbo].[DimEnergyContract] (
-    [ContractType] VARCHAR(255) PRIMARY KEY
+    [ContractTypeKey] INT IDENTITY(1,1) PRIMARY KEY,
+    [ContractType] VARCHAR(255)
 );
 
 CREATE TABLE [dbo].[DimWeatherStation] (
@@ -54,7 +55,6 @@ CREATE TABLE [dbo].[FactWeather] (
     [DateKey] INT NOT NULL,
     [TimeKey] INT,
     [WeatherStationKey] INT,
-    [PrecipQuantity] DECIMAL(18,6),
     [PrecipQuantity] DECIMAL(18,6),
     [TempAvg] DECIMAL(18,6),
     [TempMax] DECIMAL(18,6),
