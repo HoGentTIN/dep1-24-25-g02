@@ -35,5 +35,16 @@ SELECT
 FROM #TempUserData
 GROUP BY EAN_ID;
 
+-- Voeg de gegevens toe aan de FactEnergyUsage tabel
+INSERT INTO FactEnergyUsage (DateKey, TimeKey, UserKey, ConsumptionVolume_kWh, InjectionVolume_kWh)
+SELECT
+    CONVERT(INT, FORMAT(CAST(Datum AS DATE), 'yyyyMMdd')) AS DateKey,
+    CAST(SUBSTRING(Datum_Startuur, 12, 2) + SUBSTRING(Datum_Startuur, 15, 2) AS INT) AS TimeKey,
+    EAN_ID AS UserKey,
+    ISNULL(TRY_CAST(Volume_Afname_kWh AS DECIMAL(18,2)), 0.00) AS ConsumptionVolume_kWh,
+    ISNULL(TRY_CAST(Volume_Injectie_kWh AS DECIMAL(18,2)), 0.00) AS InjectionVolume_kWh
+FROM #TempUserData;
+
+
 -- Tijdelijke tabel opruimen
 DROP TABLE #TempUserData;
