@@ -42,8 +42,8 @@ CREATE TABLE [dbo].[DimDate] (
 
 CREATE TABLE [dbo].[DimUser] (
     [UserKey] INT IDENTITY(1,1) PRIMARY KEY,
-    [EAN_ID] VARCHAR(255),
-    [ContractCategory] VARCHAR(255),
+    [EAN_ID] VARCHAR(100),
+    [ContractCategory] VARCHAR(100),
     [PVInstallationIndicator] BIT,
     [ElectricVehicleIndicator] BIT,
     [HeatPumpIndicator] BIT
