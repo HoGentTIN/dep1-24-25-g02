@@ -7,11 +7,6 @@ GO
 USE [DEP1_DWH];
 
 -- Dimension Tables
-CREATE TABLE [dbo].[DimEnergyContract] (
-    [ContractTypeKey] INT IDENTITY(1,1) PRIMARY KEY,
-    [ContractType] VARCHAR(255)
-);
-
 CREATE TABLE [dbo].[DimWeatherStation] (
     [WeatherStationKey] INT IDENTITY(1,1) PRIMARY KEY,
     [WeatherStationID] VARCHAR(255),
