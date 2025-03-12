@@ -3,9 +3,10 @@ from sqlalchemy import create_engine
 import pandas as pd
 import requests
 import pyodbc
+import time
 
 # Gegevens voor de verbinding
-server = r"localhost"  # Servernaam of IP-adres van je SQL Server
+server = r"ARES"  # Servernaam of IP-adres van je SQL Server
 database = "DEP1_DWH"  # Naam van je database
 
 # Maak de verbindingsstring met Windows Authenticatie
@@ -17,24 +18,29 @@ def get_last_date():
     last_date = pd.read_sql(query, engine)["LastDate"].iloc[0]
     return str(last_date) if pd.notna(last_date) else (datetime.now() - timedelta(days=7)).strftime("%Y%m%d")
 
-def find_missing_dates(last_date):
-    # Bepaal de ontbrekende datums vanaf de laatste beschikbare datum tot gisteren
+def find_next_missing_date(last_date):
+    # Bepaal de eerstvolgende ontbrekende datum vanaf de laatste beschikbare datum tot gisteren
     start_date = datetime.strptime(last_date, "%Y%m%d") + timedelta(days=1)
     end_date = datetime.now() - timedelta(days=1)
-    missing_dates = pd.date_range(start=start_date, end=end_date).strftime("%Y-%m-%d").tolist()
-    return missing_dates
+    if start_date > end_date:
+        return None  # Geen ontbrekende data
+    return start_date.strftime("%Y-%m-%d")
 
-def fetch_weather_data(dates):
-    # Haalt weerdata op voor een reeks datums
-    all_records = []
-    for date in dates:
-        response = requests.get(f"https://opendata.meteo.be/service/ows?service=WFS&version=2.0.0&request=GetFeature&typenames=aws:aws_1day&outputformat=application/json&CQL_FILTER=(timestamp between '{date} 00:00:00' AND '{date} 23:59:59')")
-        if response.status_code == 200:
+def fetch_weather_data(date):
+    # Haalt weerdata op voor een enkele datum
+    print(f"Ophalen van data voor: {date}")  # Debugging
+    response = requests.get(f"https://opendata.meteo.be/service/ows?service=WFS&version=2.0.0&request=GetFeature&typenames=aws:aws_1day&outputformat=application/json&CQL_FILTER=(timestamp between '{date} 00:00:00' AND '{date} 23:59:59')")
+    print(f"Statuscode: {response.status_code}")  # Debugging
+    if response.status_code == 200:
+        try:
             data = response.json()
-            all_records.extend(data.get("features", []))
-        else:
-            print(f"Kon data van {date} niet ophalen.")
-    return all_records
+            print(data)
+            return data.get("features", [])
+        except Exception as e:
+            print(f"Fout bij verwerken van JSON voor {date}: {e}")
+    else:
+        print(f"Kon data van {date} niet ophalen.")
+    return []
 
 def process_weather_data(records):
     # Zet de API response om naar een DataFrame met de juiste kolommen
@@ -48,6 +54,7 @@ def process_weather_data(records):
                               "TempSoilAvg20cm", "TempSoilAvg50cm", "WindSpeed10m", "WindSpeedAvg30m", 
                               "WindGustsSpeed", "HumidityRelShelterAvg", "Pressure", "SunDuration", "ShortWaveFromSkyAvg", 
                               "SunIntAvg"])
+    print(df.head())
     return df.dropna(subset=["DateKey", "WeatherStationID"])
 
 def get_weather_station_keys():
@@ -68,14 +75,16 @@ def save_to_database(df, table_name):
 
 # Hoofdproces
 last_date = get_last_date()
-missing_dates = find_missing_dates(last_date)
+next_missing_date = find_next_missing_date(last_date)
 weather_station_keys = get_weather_station_keys()
 
-if missing_dates:
-    weather_records = fetch_weather_data(missing_dates)
+if next_missing_date:
+    weather_records = fetch_weather_data(next_missing_date)
     if weather_records:
         df_weather = process_weather_data(weather_records)
         df_weather = merge_weather_station_keys(df_weather, weather_station_keys)
         save_to_database(df_weather, "FactWeather")
     else:
         print("Geen bruikbare data opgehaald.")
+else:
+    print("Alle data is up-to-date.")
