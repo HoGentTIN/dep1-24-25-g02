@@ -111,6 +111,42 @@ CREATE TABLE [dbo].[FactNetworkCosts] (
     [DataManagementTariff_QuarterlyReadMeters] DECIMAL(10,2)
 );
 
+CREATE TABLE [dbo].[FactEnergyCost] (
+    [EnergyCostKey] INT IDENTITY(1,1) PRIMARY KEY,
+    [DateKey] INT NOT NULL,
+    [ContractKey] INT NOT NULL,
+    [SingleMeterFixed] DECIMAL(20,9) NULL,
+    [DualMeterDayFixed] DECIMAL(20,9) NULL,
+    [DualMeterNightFixed] DECIMAL(20,9) NULL,
+    [ExclusiveNightMeterFixed] DECIMAL(20,9) NULL,
+    [SingleMeterVariableMeterFactor] DECIMAL(20,9) NULL,
+    [SingleMeterVariableBalancingCost] DECIMAL(20,9) NULL,
+    [DualMeterDayVariableMeterFactor] DECIMAL(20,9) NULL,
+    [DualMeterDayVariableBalancingCost] DECIMAL(20,9) NULL,
+    [DualMeterNightVariableMeterFactor] DECIMAL(20,9) NULL,
+    [DualMeterNightVariableBalancingCost] DECIMAL(20,9) NULL,
+    [ExclusiveNightMeterVariableMeterFactor] DECIMAL(20,9) NULL,
+    [ExclusiveNightMeterVariableBalancingCost] DECIMAL(20,9) NULL,
+    [DynamicMeterCost] DECIMAL(20,9) NULL,
+    [DynamicBalancingCost] DECIMAL(20,9) NULL,
+    [SingleMeterInjectionMeterFactor] DECIMAL(20,9) NULL,
+    [SingleMeterInjectionBalancingCost] DECIMAL(20,9) NULL,
+    [DualMeterDayInjectionMeterFactor] DECIMAL(20,9) NULL,
+    [DualMeterDayInjectionBalancingCost] DECIMAL(20,9) NULL,
+    [DualMeterNightInjectionMeterFactor] DECIMAL(20,9) NULL,
+    [DualMeterNightInjectionBalancingCost] DECIMAL(20,9) NULL,
+    [AdministrativeCosts] DECIMAL(20,9) NULL,
+    [GreenElectricity] DECIMAL(20,9) NULL,
+    [WKK] DECIMAL(20,9) NULL
+);
+
+CREATE TABLE [dbo].[DimEnergyContract] (
+    [ContractKey] INT IDENTITY(1,1) PRIMARY KEY,
+    [Provider] VARCHAR(255),
+    [ContractName] VARCHAR(255),
+    [ContractType] VARCHAR(50)
+);
+
 -- Adding Constraints
 ALTER TABLE [dbo].[FactWeather] WITH CHECK ADD CONSTRAINT [FK_FactWeather_Date] FOREIGN KEY ([DateKey]) REFERENCES [dbo].[DimDate]([DateKey]);
 ALTER TABLE [dbo].[FactWeather] CHECK CONSTRAINT [FK_FactWeather_Date];
@@ -130,3 +166,11 @@ ALTER TABLE [dbo].[FactEnergyUsage] WITH CHECK ADD CONSTRAINT [FK_FactEnergyUsag
 ALTER TABLE [dbo].[FactEnergyUsage] CHECK CONSTRAINT [FK_FactEnergyUsage_Time];
 ALTER TABLE [dbo].[FactEnergyUsage] WITH CHECK ADD CONSTRAINT [FK_FactEnergyUsage_User] FOREIGN KEY ([UserKey]) REFERENCES [dbo].[DimUser]([UserKey]);
 ALTER TABLE [dbo].[FactEnergyUsage] CHECK CONSTRAINT [FK_FactEnergyUsage_User];
+
+ALTER TABLE [dbo].[FactEnergyCost] WITH CHECK ADD CONSTRAINT [FK_FactEnergyCost_Date] FOREIGN KEY ([DateKey]) REFERENCES [dbo].[DimDate]([DateKey]);
+ALTER TABLE [dbo].[FactEnergyCost] CHECK CONSTRAINT [FK_FactEnergyCost_Date];
+ALTER TABLE [dbo].[FactEnergyCost] WITH CHECK ADD CONSTRAINT [FK_FactEnergyCost_Contract] FOREIGN KEY ([ContractKey]) REFERENCES [dbo].[DimEnergyContract]([ContractTypeKey]);
+ALTER TABLE [dbo].[FactEnergyCost] CHECK CONSTRAINT [FK_FactEnergyCost_Contract];
+
+ALTER TABLE [dbo].[FactEnergyCost] WITH CHECK ADD CONSTRAINT [FK_FactEnergyCost_Contract] FOREIGN KEY ([ContractKey]) REFERENCES [dbo].[DimEnergyContract]([ContractKey]);
+ALTER TABLE [dbo].[FactEnergyCost] CHECK CONSTRAINT [FK_FactEnergyCost_Contract];

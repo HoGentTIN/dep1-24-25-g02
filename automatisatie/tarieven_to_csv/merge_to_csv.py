@@ -79,7 +79,7 @@ def main():
     json_dir = "extracted_json"
 
     # Output CSV file
-    output_csv = "energy_costs.csv"
+    output_csv = "../../data/input/energy_costs.csv"
 
     # Convert JSON files to CSV
     json_files_to_csv(json_dir, output_csv)

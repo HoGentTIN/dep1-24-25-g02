@@ -8,14 +8,14 @@ OUTPUT_DIR = "tariefkaarten"
 
 # Lijst van leveranciers en hun producten
 SUPPLIERS = [
-    {
-        "name": "BOLT",
-        "path": "/energie/tariefkaarten/1-bolt",
-        "products": [
-            {"name": "ELEKTRICITEIT", "from_date": "2023-01-01"},
-            {"name": "VAST", "from_date": "2024-01-01"}
-        ]
-    },
+    # {
+    #     "name": "BOLT",
+    #     "path": "/energie/tariefkaarten/1-bolt",
+    #     "products": [
+    #         {"name": "ELEKTRICITEIT", "from_date": "2023-01-01"},
+    #         {"name": "VAST", "from_date": "2024-01-01"}
+    #     ]
+    # },
     {
         "name": "DATS24",
         "path": "/energie/tariefkaarten/1-dats-24",
@@ -27,17 +27,17 @@ SUPPLIERS = [
         "name": "ENECO",
         "path": "/energie/tariefkaarten/1-eneco",
         "products": [
-            {"name": "ZON & WIND FLEX", "from_date": "2023-01-01"}
+            {"name": "ZON WIND FLEX", "from_date": "2023-01-01", "specific_url": "/energie/tariefkaarten/1-eneco/1-4225-zon-wind-flex"}
         ]
     },
-    {
-        "name": "ENERGIE-BE",
-        "path": "/energie/tariefkaarten/1-energie-be",
-        "products": [
-            {"name": "VARIABEL", "from_date": "2023-01-01", "specific_url": "/energie/tariefkaarten/1-energie-be/1-4452-variabel"},
-            {"name": "VAST", "from_date": "2024-01-01"}
-        ]
-    },
+    # {
+    #     "name": "ENERGIE-BE",
+    #     "path": "/energie/tariefkaarten/1-energie-be",
+    #     "products": [
+    #         {"name": "VARIABEL", "from_date": "2023-01-01", "specific_url": "/energie/tariefkaarten/1-energie-be/1-4452-variabel"},
+    #         {"name": "VAST", "from_date": "2024-01-01"}
+    #     ]
+    # },
     {
         "name": "LUMINUS",
         "path": "/energie/tariefkaarten/1-luminus",
