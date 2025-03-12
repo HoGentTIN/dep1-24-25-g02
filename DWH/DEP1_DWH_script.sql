@@ -164,8 +164,5 @@ ALTER TABLE [dbo].[FactEnergyUsage] CHECK CONSTRAINT [FK_FactEnergyUsage_User];
 
 ALTER TABLE [dbo].[FactEnergyCost] WITH CHECK ADD CONSTRAINT [FK_FactEnergyCost_Date] FOREIGN KEY ([DateKey]) REFERENCES [dbo].[DimDate]([DateKey]);
 ALTER TABLE [dbo].[FactEnergyCost] CHECK CONSTRAINT [FK_FactEnergyCost_Date];
-ALTER TABLE [dbo].[FactEnergyCost] WITH CHECK ADD CONSTRAINT [FK_FactEnergyCost_Contract] FOREIGN KEY ([ContractKey]) REFERENCES [dbo].[DimEnergyContract]([ContractTypeKey]);
-ALTER TABLE [dbo].[FactEnergyCost] CHECK CONSTRAINT [FK_FactEnergyCost_Contract];
-
 ALTER TABLE [dbo].[FactEnergyCost] WITH CHECK ADD CONSTRAINT [FK_FactEnergyCost_Contract] FOREIGN KEY ([ContractKey]) REFERENCES [dbo].[DimEnergyContract]([ContractKey]);
 ALTER TABLE [dbo].[FactEnergyCost] CHECK CONSTRAINT [FK_FactEnergyCost_Contract];
