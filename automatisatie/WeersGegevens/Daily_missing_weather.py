@@ -93,6 +93,7 @@ if response.status_code == 200:
                               "WindGustsSpeed", "HumidityRelShelterAvg", "Pressure", "SunDuration", "ShortWaveFromSkyAvg", 
                               "SunIntAvg"])
     print(df.count)
+    save_to_database(df, "FactWeather")
 
 else:
     print(f"Fout bij het ophalen van data: {response.status_code}")
