@@ -1,22 +1,20 @@
+-- Hoeveel tariefkaarten heb je toegevoegd voor DATS 24 Elektriciteit?
 SELECT COUNT(*) as 'Aantal' FROM FactEnergyCost JOIN dbo.DimEnergyContract D on FactEnergyCost.ContractKey = D.ContractKey WHERE Provider = 'DATS24' AND ContractName = 'ELEKTRICITEIT'
 
+-- Hoe vaak veranderde het verbruikstarief met een enkelvoudige teller binnen het contract Eneco Zon & Wind Flex?
 SELECT DISTINCT SingleMeterVariableMeterFactor FROM FactEnergyCost  JOIN dbo.DimEnergyContract D on FactEnergyCost.ContractKey = D.ContractKey WHERE ContractName = 'ZON WIND FLEX'
 
+-- Wat was in 2024 het verschil tussen de hoogste en de laagste abonnementskost (per maand)? Tussen welke twee contracten was dit?
+-- Antwoord: Zon en flex Variabel & octa+ fixed
 SELECT * FROM FactEnergyCost JOIN dbo.DimEnergyContract D on D.ContractKey = FactEnergyCost.ContractKey
 WHERE DateKey LIKE '2024%' AND (AdministrativeCosts = (SELECT MIN(AdministrativeCosts) FROM FactEnergyCost)
    OR AdministrativeCosts = (SELECT MAX(AdministrativeCosts) FROM FactEnergyCost));
 
+-- Wat was over alle vaste contracten heen in 2024 het contract met het laagste tarief (op jaarbasis) voor 1 kWu stroom met een enkelvoudige meter?
 SELECT MIN(SingleMeterFixed) FROM FactEnergyCost
 
-SELECT EnergyCostKey, AdministrativeCosts, DateKey, ContractKey, SingleMeterFixed
-FROM FactEnergyCost
-WHERE SingleMeterFixed = (SELECT MIN(SingleMeterFixed) FROM FactEnergyCost WHERE DateKey / 10000 = 2024)
-   OR SingleMeterFixed = (SELECT MAX(SingleMeterFixed) FROM FactEnergyCost WHERE DateKey / 10000 = 2024);
 
-
--- Query voor laagste en hoogste AdministrativeCosts met AdministrativeCosts als tweede kolom
--- Selecteer het contract met de hoogste injectieprijs voor januari 2025
--- met een Belpex-waarde van 100 euro
+-- Met welk contract kreeg je in januari 2025 de hoogste prijs per kWu voor geïnjecteerde stroom als je rekent met een constante Belpex-waarde van 100 euro? Hoeveel per kWu?
 WITH InjectionPrices AS (
     SELECT
         f.ContractKey,
@@ -76,7 +74,8 @@ ORDER BY
 
 
 
--- Laagste meterfactor februari
+-- Voor welk contract en tarieftype(s) had je vorige maand de laagste meterfactor? Hoeveel?
+-- De meterfactor is de X uit de tariefformule 'Belpex * X + Y'
 WITH MeterfactorData AS (
     SELECT
         ContractKey,
