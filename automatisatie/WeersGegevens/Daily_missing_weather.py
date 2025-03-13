@@ -92,6 +92,8 @@ if response.status_code == 200:
                               "TempSoilAvg20cm", "TempSoilAvg50cm", "WindSpeed10m", "WindSpeedAvg30m", 
                               "WindGustsSpeed", "HumidityRelShelterAvg", "Pressure", "SunDuration", "ShortWaveFromSkyAvg", 
                               "SunIntAvg"])
+    
+    df = df.dropna(subset=['WeatherStationKey'])
     print(df.count)
     save_to_database(df, "FactWeather")
 
