@@ -67,6 +67,6 @@ if __name__ == "__main__":
     # You can specify a different CSV file as an argument
     import sys
 
-    csv_file = "weather_data.csv"
+    csv_file = "../../data/input/weather_data.csv"
 
     import_weather_csv_to_db(csv_file)

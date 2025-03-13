@@ -10,7 +10,7 @@ USE [DEP1_DWH];
 CREATE TABLE [dbo].[DimWeatherStation] (
     [WeatherStationKey] INT IDENTITY(1,1) PRIMARY KEY,
     [WeatherStationID] VARCHAR(255),
-    [WeatherStationName] VARCHAR(255),
+    [WeatherStationName] VARCHAR(255) UNIQUE,
     [Latitude] DECIMAL(9,6),
     [Longitude] DECIMAL(9,6),
     [Altitude] DECIMAL(9,2)

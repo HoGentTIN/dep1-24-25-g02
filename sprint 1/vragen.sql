@@ -1,13 +1,15 @@
+USE DEP1_DWH;
+
 -- Hoeveel tariefkaarten heb je toegevoegd voor DATS 24 Elektriciteit?
 SELECT COUNT(*) as 'Aantal' FROM FactEnergyCost JOIN dbo.DimEnergyContract D on FactEnergyCost.ContractKey = D.ContractKey WHERE Provider = 'DATS24' AND ContractName = 'ELEKTRICITEIT'
 
 -- Hoe vaak veranderde het verbruikstarief met een enkelvoudige teller binnen het contract Eneco Zon & Wind Flex?
-SELECT DISTINCT SingleMeterVariableMeterFactor FROM FactEnergyCost  JOIN dbo.DimEnergyContract D on FactEnergyCost.ContractKey = D.ContractKey WHERE ContractName = 'ZON WIND FLEX'
+SELECT Count(DISTINCT SingleMeterVariableBalancingCost) FROM FactEnergyCost  JOIN dbo.DimEnergyContract D on FactEnergyCost.ContractKey = D.ContractKey WHERE ContractName = 'ZON WIND FLEX'
 
 -- Wat was in 2024 het verschil tussen de hoogste en de laagste abonnementskost (per maand)? Tussen welke twee contracten was dit?
 -- Antwoord: Zon en flex Variabel & octa+ fixed
 SELECT * FROM FactEnergyCost JOIN dbo.DimEnergyContract D on D.ContractKey = FactEnergyCost.ContractKey
-WHERE DateKey LIKE '2024%' AND (AdministrativeCosts = (SELECT MIN(AdministrativeCosts) FROM FactEnergyCost)
+WHERE DateKey LIKE '2024%' AND (AdministrativeCosts = (SELECT MIN(AdministrativeCosts) FROM FactEnergyCost  WHERE AdministrativeCosts != 0)
    OR AdministrativeCosts = (SELECT MAX(AdministrativeCosts) FROM FactEnergyCost));
 
 -- Wat was over alle vaste contracten heen in 2024 het contract met het laagste tarief (op jaarbasis) voor 1 kWu stroom met een enkelvoudige meter?
@@ -120,3 +122,51 @@ FROM
 ORDER BY
     Meterfactor ASC;
 
+-- Hoeveel metingen heb je al toegevoegd voor maart 2025?
+SELECT COUNT(*) AS AantalMetingen FROM FactWeather WHERE DateKey LIKE '202503%'
+
+-- aantal metingen ìn maart 2025
+SELECT count(*) AS 'Aantal records 2025' FROM FactWeather
+WHERE DateKey > 20250206
+
+-- max gemiddelde temperatuur in 2025
+SELECT * FROM FactWeather
+WHERE DateKey > 20250000
+and TempAvg = (SELECT max(TempAvg) FROM FactWeather WHERE DateKey > 20250000)
+
+-- max regen in Melle in 2025
+SELECT
+    f.DateKey,
+    f.WeatherKey,
+    f.PrecipQuantity,
+    d.WeatherStationName
+FROM FactWeather f
+INNER JOIN DimWeatherStation d ON f.WeatherStationKey = d.WeatherStationKey
+WHERE f.DateKey > 20250000
+AND UPPER(d.WeatherStationName) = 'MELLE'
+AND f.PrecipQuantity = (
+    SELECT MAX(fw.PrecipQuantity)
+    FROM FactWeather fw
+    INNER JOIN DimWeatherStation dw ON fw.WeatherStationKey = dw.WeatherStationKey
+    WHERE fw.DateKey > 20250000
+    AND UPPER(dw.WeatherStationName) = 'MELLE'
+);
+
+
+-- Hoeveel uren zonlicht werden reeds gemeten in Stabroek deze maand?
+SELECT
+    f.DateKey,
+    f.WeatherKey,
+    f.SunDuration,
+    d.WeatherStationName
+FROM FactWeather f
+INNER JOIN DimWeatherStation d ON f.WeatherStationKey = d.WeatherStationKey
+WHERE f.DateKey > 20250300
+AND UPPER(d.WeatherStationName) = 'STABROEK'
+AND f.SunDuration = (
+    SELECT MAX(fw.SunDuration)
+    FROM FactWeather fw
+    INNER JOIN DimWeatherStation dw ON fw.WeatherStationKey = dw.WeatherStationKey
+    WHERE fw.DateKey > 20250300
+    AND UPPER(dw.WeatherStationName) = 'STABROEK'
+);

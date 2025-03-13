@@ -6,10 +6,9 @@ import os
 import random
 
 
-def get_start_date():
+def get_start_date(csv_file):
     # Define a start date for data collection
     # If a CSV already exists, get the latest date from it
-    csv_file = "weather_data.csv"
     if os.path.exists(csv_file):
         try:
             df = pd.read_csv(csv_file)
@@ -20,8 +19,29 @@ def get_start_date():
         except Exception as e:
             print(f"Error reading existing CSV: {e}")
 
-    # Default to 7 days ago if no CSV exists or can't be read
-    return (datetime.now() - timedelta(days=7)).strftime("%Y%m%d")
+    # If no CSV exists or can't be read, try to get the latest date from the database
+    try:
+        from sqlalchemy import create_engine, text
+        server = r"localhost"
+        database = "DEP1_DWH"
+
+        engine = create_engine(f"mssql+pyodbc://@{server}/{database}?driver=ODBC+Driver+17+for+SQL+Server")
+
+        query = text("SELECT MAX(DateKey) AS LastDate FROM FactWeather")
+
+        with engine.connect() as connection:
+            result = connection.execute(query).fetchone()
+
+            if result and result[0]:
+                print(f"Found latest date in database: {result[0]}")
+                return str(result[0])
+            else:
+                print("No date found in database, using default (7 days ago)")
+    except Exception as e:
+        print(f"Error connecting to database: {e}")
+
+    print("No existing data found, exiting.")
+    exit(1)
 
 
 def find_missing_dates(last_date):
@@ -32,7 +52,7 @@ def find_missing_dates(last_date):
     return missing_dates
 
 
-def fetch_weather_data(date, max_retries=3, initial_delay=5):
+def fetch_weather_data(date, max_retries=5, initial_delay=5):
     # Fetch weather data for a specific date with retry logic
     delay = initial_delay
     for attempt in range(max_retries):
@@ -55,6 +75,7 @@ def fetch_weather_data(date, max_retries=3, initial_delay=5):
                     print(f"Error processing JSON for {date}: {e}")
             else:
                 print(f"Failed to fetch data for {date}. Status code: {response.status_code}")
+                return []
 
             # If we're here, we need to retry
             if attempt < max_retries - 1:  # Don't sleep after the last attempt
@@ -128,7 +149,7 @@ def process_weather_data(records):
     return df.dropna(subset=["DateKey", "WeatherStationID"])
 
 
-def save_to_csv(df, filename="weather_data.csv"):
+def save_to_csv(df, filename):
     # Save DataFrame to CSV, appending if the file exists
     if df.empty:
         print("No data to save.")
@@ -152,7 +173,8 @@ def save_to_csv(df, filename="weather_data.csv"):
 
 # Main process
 def main():
-    start_date = get_start_date()
+    csv_file = "../../data/input/weather_data.csv"
+    start_date = get_start_date(csv_file)
     missing_dates = find_missing_dates(start_date)
 
     if not missing_dates:
@@ -180,7 +202,7 @@ def main():
 
     # Save all collected data to CSV
     if not all_weather_data.empty:
-        save_to_csv(all_weather_data)
+        save_to_csv(all_weather_data, csv_file)
     else:
         print("No data was collected.")
 
