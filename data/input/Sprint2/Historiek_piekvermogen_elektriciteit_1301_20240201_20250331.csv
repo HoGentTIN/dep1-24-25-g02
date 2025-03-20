@@ -1,0 +1,15 @@
+﻿Van (datum);Van (tijdstip);Tot (datum);Tot (tijdstip);EAN-code;Meter;Metertype;Register;Volume;Eenheid;Validatiestatus;Omschrijving
+01-02-2024;00:00:00;01-03-2024;00:00:00;1301;;Digitale meter;Piekvermogen;4,349;kW;Uitgelezen;
+01-03-2024;00:00:00;01-04-2024;00:00:00;1301;;Digitale meter;Piekvermogen;3,950;kW;Uitgelezen;
+01-04-2024;00:00:00;01-05-2024;00:00:00;1301;;Digitale meter;Piekvermogen;9,308;kW;Uitgelezen;
+01-05-2024;00:00:00;01-06-2024;00:00:00;1301;;Digitale meter;Piekvermogen;3,532;kW;Uitgelezen;
+01-06-2024;00:00:00;01-07-2024;00:00:00;1301;;Digitale meter;Piekvermogen;4,456;kW;Uitgelezen;
+01-07-2024;00:00:00;01-08-2024;00:00:00;1301;;Digitale meter;Piekvermogen;4,402;kW;Uitgelezen;
+01-08-2024;00:00:00;01-09-2024;00:00:00;1301;;Digitale meter;Piekvermogen;3,256;kW;Uitgelezen;
+01-09-2024;00:00:00;01-10-2024;00:00:00;1301;;Digitale meter;Piekvermogen;4,241;kW;Uitgelezen;
+01-10-2024;00:00:00;01-11-2024;00:00:00;1301;;Digitale meter;Piekvermogen;3,054;kW;Uitgelezen;
+01-11-2024;00:00:00;01-12-2024;00:00:00;1301;;Digitale meter;Piekvermogen;3,622;kW;Uitgelezen;
+01-12-2024;00:00:00;01-01-2025;00:00:00;1301;;Digitale meter;Piekvermogen;6,706;kW;Uitgelezen;
+01-01-2025;00:00:00;01-02-2025;00:00:00;1301;;Digitale meter;Piekvermogen;3,977;kW;Uitgelezen;
+01-02-2025;00:00:00;01-03-2025;00:00:00;1301;;Digitale meter;Piekvermogen;3,838;kW;Uitgelezen;
+01-03-2025;00:00:00;01-04-2025;00:00:00;1301;;Digitale meter;Piekvermogen;0,000;kW;Geen piekvermogen;

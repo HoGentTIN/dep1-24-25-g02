@@ -1,0 +1,3 @@
+﻿Van (datum);Van (tijdstip);Tot (datum);Tot (tijdstip);EAN-code;Meter;Metertype;Register;Volume;Eenheid;Validatiestatus;Omschrijving
+1/01/2025;0:00:00;1/02/2025;0:00:00;1302;;Digitale meter;Piekvermogen;7,332;kW;Uitgelezen;Hoofdverblijf
+1/02/2025;0:00:00;1/03/2025;0:00:00;1302;;Digitale meter;Piekvermogen;7,436;kW;Voorlopig;Hoofdverblijf
