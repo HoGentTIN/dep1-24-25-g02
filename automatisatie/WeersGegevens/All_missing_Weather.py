@@ -6,7 +6,7 @@ import pyodbc
 import time
 
 # Gegevens voor de verbinding
-server = r"ARES"  # Servernaam of IP-adres van je SQL Server
+server = r"localhost"  # Servernaam of IP-adres van je SQL Server
 database = "DEP1_DWH"  # Naam van je database
 
 # Maak de verbindingsstring met Windows Authenticatie
