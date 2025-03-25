@@ -33,7 +33,7 @@ def convert_fixed(file_path):
     # In[38]:
 
 
-    contract_key = "OCTAPLUS_ECOCLEAR"
+    contract_key = "OCTAPLUS_FIXED"
 
 
     # In[39]:

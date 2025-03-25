@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[203]:
+# In[38]:
 
 
 import re
+import time
+
 import camelot
 import os
 import csv
@@ -12,41 +14,45 @@ import pdfplumber
 import re
 from pathlib import Path
 
-# In[204]:
 
-pdf_folder = '../../../leveranciers_tarieven/tariefkaarten/OCTA+/ECO CLEAR'
+# In[36]:
+
+
+pdf_folder = '../../../leveranciers_tarieven/tariefkaarten/OCTA+/SMART VARIABEL'
 
 pdf_files = [str(file) for file in Path(pdf_folder).glob("*.pdf")]
 
 
-def convert_ecoclear(file_path):
+def convert_fixed(file_path):
+
+    # In[39]:
 
 
-    # In[205]:
+    # In[40]:
 
 
-    csv_file = "octaplus_ecoclear.csv"
+    csv_file = "octaplus_smartvariabel.csv"
 
 
-    # In[206]:
+    # In[41]:
 
 
-    contract_key = "OCTAPLUS_ECOCLEAR"
+    contract_key = "OCTAPLUS_SMARTVARIABEL"
 
 
-    # In[207]:
+    # In[42]:
 
 
     data = dict()
 
 
-    # In[208]:
+    # In[43]:
 
 
     tables = camelot.read_pdf(file_path, pages="all", flavor="hybrid")
 
 
-    # In[209]:
+    # In[44]:
 
 
     for i, table in enumerate(tables):
@@ -57,7 +63,7 @@ def convert_ecoclear(file_path):
             data['AdministrativeCosts'] = float(number)
 
 
-    # In[210]:
+    # In[45]:
 
 
     for i, table in enumerate(tables):
@@ -76,13 +82,13 @@ def convert_ecoclear(file_path):
             data["ExclusiveNightMeterFixed"] = df.loc[fixed_fee_row][1]
 
 
-    # In[211]:
+    # In[46]:
 
 
     flatten = lambda *n: (e for a in n for e in (flatten(*a) if isinstance(a, (tuple, list)) else (a,)))
 
 
-    # In[212]:
+    # In[47]:
 
 
     with pdfplumber.open(file_path) as pdf:
@@ -92,7 +98,7 @@ def convert_ecoclear(file_path):
         cells = list(flatten(tables))
 
 
-    # In[213]:
+    # In[48]:
 
 
     with pdfplumber.open(file_path) as pdf:
@@ -109,23 +115,26 @@ def convert_ecoclear(file_path):
                         data['WKK'] = numbers[-1]
 
 
-    # In[214]:
+    # In[49]:
 
 
     data
 
 
-    # In[215]:
-    year, month = re.search(r'(\d{4})-(\d{2})', file_path).groups()
-    date_key = f"{year}{month}01"  # Format as yyyymmdd with day as 01
+    # In[50]:
 
-    print("currently processing", date_key)
+
+    year, month = re.search(r'(\d{4})-(\d{2})', file_path).groups()
+    date_key = f"{year}{month}01"
+
+
+    # In[51]:
+
 
     with pdfplumber.open(file_path) as pdf:
         for page in pdf.pages:
-            if "De elektriciteitsprijs voor OCTA+ Eco Clear" in page.extract_text():
+            if "De elektriciteitsprijs voor OCTA+ Smart Variabel wordt maandelijks" in page.extract_text():
                 text = page.extract_text().replace("\n", " ")
-
                 # Afname
                 data["SingleMeterVariableMeterFactor"], data["SingleMeterVariableBalancingCost"] = re.findall(
                     r'\d+(?:,\d+)?', re.search(r'Enkelvoudige meter :\s*Belpex RLP \* [\d,]+ \+ [\d,]+', text).group(0))
@@ -142,46 +151,39 @@ def convert_ecoclear(file_path):
                 # Injectie
                 try:
                     data["SingleMeterInjectionMeterFactor"], data["SingleMeterInjectionBalancingCost"] = re.findall(
-                        r'\d+(?:,\d+)?', re.search(r'enkelvoudig :\s*Belpex \* [\d,]+ \- [\d,]+', text).group(0))
+                            r'\d+(?:,\d+)?', re.search(r'enkelvoudig :\s*Belpex \* [\d,]+ \- [\d,]+', text).group(0))
                     data["SingleMeterInjectionBalancingCost"] = -float(
-                        data["SingleMeterInjectionBalancingCost"].replace(",", "."))
+                            data["SingleMeterInjectionBalancingCost"].replace(",", "."))
 
                     data["DualMeterDayInjectionMeterFactor"], data["DualMeterDayInjectionBalancingCost"] = re.findall(
-                        r'\d+(?:,\d+)?', re.search(r'tweevoudig/piekuren : Belpex \* [\d,]+ \- [\d,]+', text).group(0))
+                            r'\d+(?:,\d+)?', re.search(r'tweevoudig/piekuren : Belpex \* [\d,]+ \- [\d,]+', text).group(0))
                     data["DualMeterDayInjectionBalancingCost"] = -float(
-                        data["DualMeterDayInjectionBalancingCost"].replace(",", "."))
+                            data["DualMeterDayInjectionBalancingCost"].replace(",", "."))
 
                     data["DualMeterNightInjectionMeterFactor"], data[
-                        "DualMeterNightInjectionBalancingCost"] = re.findall(r'\d+(?:,\d+)?', re.search(
-                        r'tweevoudig/daluren : Belpex \* [\d,]+ \- [\d,]+', text).group(0))
+                            "DualMeterNightInjectionBalancingCost"] = re.findall(r'\d+(?:,\d+)?', re.search(
+                            r'tweevoudig/daluren : Belpex \* [\d,]+ \- [\d,]+', text).group(0))
                     data["DualMeterNightInjectionBalancingCost"] = -float(
-                        data["DualMeterNightInjectionBalancingCost"].replace(",", "."))
+                            data["DualMeterNightInjectionBalancingCost"].replace(",", "."))
                 except:
                     print(f"Datekey {date_key} failed, taking default values instead")
                     data["SingleMeterInjectionMeterFactor"] = data["DualMeterDayInjectionMeterFactor"] = data["DualMeterNightInjectionMeterFactor"] = 0.915
                     data["SingleMeterInjectionBalancingCost"] = data["DualMeterDayInjectionBalancingCost"] = data["DualMeterNightInjectionBalancingCost"] = -19.83
 
 
-    # In[216]:
-
-
-    year, month = re.search(r'(\d{4})-(\d{2})', file_path).groups()
-    date_key = f"{year}{month}01"  # Format as yyyymmdd with day as 01
-
-
-    # In[217]:
+    # In[52]:
 
 
     file_exists = os.path.isfile(csv_file)
 
 
-    # In[218]:
+    # In[53]:
 
 
     data = {key: value.replace(',', '.') if isinstance(value, str) else value for key, value in data.items()}
 
 
-    # In[219]:
+    # In[54]:
 
 
     with open(csv_file, mode='a', newline='', encoding='utf-8') as file:
@@ -236,6 +238,6 @@ def convert_ecoclear(file_path):
 
     print(f"Data for {date_key} successfully written to {csv_file}")
 
-
 for file in pdf_files:
-    convert_ecoclear(file)
+    convert_fixed(file)
+    time.sleep(1)
