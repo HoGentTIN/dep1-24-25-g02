@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[203]:
+# In[35]:
 
 
 import re
@@ -12,41 +12,43 @@ import pdfplumber
 import re
 from pathlib import Path
 
-# In[204]:
+
+# In[36]:
+
 
 pdf_folder = '../../../leveranciers_tarieven/tariefkaarten/OCTA+/ECO CLEAR'
 
 pdf_files = [str(file) for file in Path(pdf_folder).glob("*.pdf")]
 
 
-def convert_ecoclear(file_path):
+def convert_fixed(file_path):
 
 
-    # In[205]:
+    # In[37]:
 
 
-    csv_file = "octaplus_ecoclear.csv"
+    csv_file = "octaplus_fixed.csv"
 
 
-    # In[206]:
+    # In[38]:
 
 
     contract_key = "OCTAPLUS_ECOCLEAR"
 
 
-    # In[207]:
+    # In[39]:
 
 
     data = dict()
 
 
-    # In[208]:
+    # In[40]:
 
 
     tables = camelot.read_pdf(file_path, pages="all", flavor="hybrid")
 
 
-    # In[209]:
+    # In[41]:
 
 
     for i, table in enumerate(tables):
@@ -57,7 +59,7 @@ def convert_ecoclear(file_path):
             data['AdministrativeCosts'] = float(number)
 
 
-    # In[210]:
+    # In[42]:
 
 
     for i, table in enumerate(tables):
@@ -76,13 +78,13 @@ def convert_ecoclear(file_path):
             data["ExclusiveNightMeterFixed"] = df.loc[fixed_fee_row][1]
 
 
-    # In[211]:
+    # In[43]:
 
 
     flatten = lambda *n: (e for a in n for e in (flatten(*a) if isinstance(a, (tuple, list)) else (a,)))
 
 
-    # In[212]:
+    # In[44]:
 
 
     with pdfplumber.open(file_path) as pdf:
@@ -92,7 +94,7 @@ def convert_ecoclear(file_path):
         cells = list(flatten(tables))
 
 
-    # In[213]:
+    # In[45]:
 
 
     with pdfplumber.open(file_path) as pdf:
@@ -109,61 +111,39 @@ def convert_ecoclear(file_path):
                         data['WKK'] = numbers[-1]
 
 
-    # In[214]:
+    # In[46]:
 
 
     data
 
 
-    # In[215]:
-    year, month = re.search(r'(\d{4})-(\d{2})', file_path).groups()
-    date_key = f"{year}{month}01"  # Format as yyyymmdd with day as 01
-
-    print("currently processing", date_key)
-
-    with pdfplumber.open(file_path) as pdf:
-        for page in pdf.pages:
-            if "De elektriciteitsprijs voor OCTA+ Eco Clear" in page.extract_text():
-                text = page.extract_text().replace("\n", " ")
-
-                # Afname
-                data["SingleMeterVariableMeterFactor"], data["SingleMeterVariableBalancingCost"] = re.findall(
-                    r'\d+(?:,\d+)?', re.search(r'Enkelvoudige meter :\s*Belpex RLP \* [\d,]+ \+ [\d,]+', text).group(0))
-                data["DualMeterDayVariableMeterFactor"], data["DualMeterDayVariableBalancingCost"] = re.findall(
-                    r'\d+(?:,\d+)?',
-                    re.search(r'Tweevoudige meter – Piek :\s*Belpex RLP \* [\d,]+ \+ [\d,]+', text).group(0))
-                data["DualMeterNightVariableMeterFactor"], data["DualMeterNightVariableBalancingCost"] = re.findall(
-                    r'\d+(?:,\d+)?',
-                    re.search(r'Tweevoudige meter – Dal :\s*Belpex RLP \* [\d,]+ \+ [\d,]+', text).group(0))
-                data["ExclusiveNightMeterVariableMeterFactor"], data[
-                    "ExclusiveNightMeterVariableBalancingCost"] = re.findall(r'\d+(?:,\d+)?', re.search(
-                    r'Exclusief Nachtmeter :\s*Belpex RLP \* [\d,]+ \+ [\d,]+', text).group(0))
-
-                # Injectie
-                data["SingleMeterInjectionMeterFactor"] = data["DualMeterDayInjectionMeterFactor"] = data["DualMeterNightInjectionMeterFactor"] = 0.915
-                data["SingleMeterInjectionBalancingCost"] = data["DualMeterDayInjectionBalancingCost"] = data["DualMeterNightInjectionBalancingCost"] = -19.83
-
-
-    # In[216]:
+    # In[47]:
 
 
     year, month = re.search(r'(\d{4})-(\d{2})', file_path).groups()
-    date_key = f"{year}{month}01"  # Format as yyyymmdd with day as 01
+    date_key = f"{year}{month}01"
 
 
-    # In[217]:
+    # In[48]:
+
+
+    data["SingleMeterInjectionMeterFactor"] = data["DualMeterDayInjectionMeterFactor"] = data["DualMeterNightInjectionMeterFactor"] = 0.915
+    data["SingleMeterInjectionBalancingCost"] = data["DualMeterDayInjectionBalancingCost"] = data["DualMeterNightInjectionBalancingCost"] = -19.83
+
+
+    # In[49]:
 
 
     file_exists = os.path.isfile(csv_file)
 
 
-    # In[218]:
+    # In[50]:
 
 
     data = {key: value.replace(',', '.') if isinstance(value, str) else value for key, value in data.items()}
 
 
-    # In[219]:
+    # In[51]:
 
 
     with open(csv_file, mode='a', newline='', encoding='utf-8') as file:
@@ -220,4 +200,4 @@ def convert_ecoclear(file_path):
 
 
 for file in pdf_files:
-    convert_ecoclear(file)
+    convert_fixed(file)
