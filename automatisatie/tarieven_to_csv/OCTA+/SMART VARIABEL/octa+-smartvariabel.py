@@ -5,8 +5,6 @@
 
 
 import re
-import time
-
 import camelot
 import os
 import csv
@@ -239,5 +237,7 @@ def convert_fixed(file_path):
     print(f"Data for {date_key} successfully written to {csv_file}")
 
 for file in pdf_files:
-    convert_fixed(file)
-    time.sleep(1)
+    try:
+        convert_fixed(file)
+    except:
+        print(f"{file} failed")
