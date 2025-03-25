@@ -60,7 +60,7 @@ SUPPLIERS = [
         "path": "/energie/tariefkaarten/1-totalenergies",
         "products": [
             {"name": "PIXEL", "from_date": "2023-01-01", "specific_url": "/energie/tariefkaarten/1-totalenergies/1-6838-pixel"},
-            {"name": "PIXEL NEXT VAST", "from_date": "2023-08-01", "specific_url": "/energie/tariefkaarten/1-totalenergies/1-6840-pixel-next"},
+            {"name": "PIXEL NEXT VAST", "from_date": "2023-08-01", "specific_url": "/energie/tariefkaarten/1-totalenergies/1-7608-pixel-next-vast"},
             {"name": "PIXEL EDRIVE", "from_date": "2023-01-01", "specific_url": "/energie/tariefkaarten/1-totalenergies/1-6004-pixel-edrive"},
             {"name": "PIXIE", "from_date": "2024-06-01", "specific_url": "/energie/tariefkaarten/1-totalenergies/1-8302-pixie"},
         ]
