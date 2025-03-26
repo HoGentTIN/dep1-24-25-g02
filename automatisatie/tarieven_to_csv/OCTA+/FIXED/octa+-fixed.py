@@ -16,9 +16,11 @@ from pathlib import Path
 # In[36]:
 
 
-pdf_folder = '../../../leveranciers_tarieven/tariefkaarten/OCTA+/ECO CLEAR'
+pdf_folder = '../../../leveranciers_tarieven/tariefkaarten/OCTA+/FIXED'
 
 pdf_files = [str(file) for file in Path(pdf_folder).glob("*.pdf")]
+
+print(pdf_files)
 
 
 def convert_fixed(file_path):
